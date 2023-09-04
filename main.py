@@ -30,20 +30,29 @@ import requests
 import json
 
 url = 'https://api.hh.ru/vacancies/'
+
+answer = ""
 params = {
+    "text": answer,
     'id': None,  # ID вакансии
     'name': None,  # назввние должности
     'area': None,  # страна Россия 113
     'salary': None,  # зарплата from и to
     'type': None, #id open name Открытая
-    'employer_id': 1740, #ID работодателя Яндекс
-    'snippet': None, #requirement: опыт не требуется, наличие пк
+    'employer_id': None, #ID работодателя Яндекс
     'experience': None,  #нет опыта
     'employment': None,  #занятость полная_неполная
     'responsibility': None, #описание
     'requirement' : None #требования
 }
-req = requests.get(f'{url}/vacancies', params=params)
+req = requests.get(url, params=params)
 data = req.content.decode()
 vacant = json.loads(data)
-print(vacant['items'][0]['name'])
+# for data in vacant:
+    # print(vacant['items'][0]['name'])
+    # print(vacant['items'][0]['employer']['name'])
+    # print(vacant['items'][0]['snippet']['requirement'])
+    # print(vacant['items'][0]['salary']['to'])
+    # print(vacant['items'][0]['snippet']['responsibility'])
+print(vacant)
+
