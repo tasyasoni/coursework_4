@@ -4,7 +4,7 @@ import json
 
 class Api_work(ABC):
     @abstractmethod
-    def upload(self):
+    def get_vacancies(self):
         pass
 
 
@@ -21,13 +21,14 @@ class Hh_class(Api_work):
         self.vacant = vacant
         self.name = self.vacant['items'][0]['name']
         self.employer = self.vacant['items'][0]['employer']['name']
-        self.req = self.vacant['items'][0]['snippet']['requirement']
         self.salary = self.vacant['items'][0]['salary']['from']
+        self.req = self.vacant['items'][0]['snippet']['requirement']
         self.resp = self.vacant['items'][0]['snippet']['responsibility']
+        self.url = self.vacant['items'][0]['alternate_url']
     def __str__(self):
-        return(f'{self.name},{self.employer}, {self.salary}')
+        return(f'{self.name},\n{self.employer},\n{self.salary},\n{self.req},\n{self.resp},\n{self.url}')
 
-    def upload(self):
+    def get_vacancies(self):
         return(self.vacant)
 
 
@@ -47,30 +48,21 @@ class Superjob_class(Api_work):
         self.name = self.vacant['objects'][0]['profession']
         self.employer = self.vacant['objects'][0]['client']['title']
         self.salary = self.vacant['objects'][0]['payment_to']
+        self.req = self.vacant['objects'][0]['candidat']
+        self.resp = self.vacant['objects'][0]['vacancyRichText']
+        self.url = self.vacant['objects'][0]['link']
 
 
     def __str__(self):
-        return(f'{self.name},{self.employer}, {self.salary}')
+        return(f'{self.name},\n{self.employer},\n{self.salary},\n{self.req},\n{self.resp},\n{self.url}')
 
-    def upload(self):
+    def get_vacancies(self):
         return(self.vacant)
 
 
-hh1 =  Hh_class("python")
-hh2 =  Hh_class("python")
-hh3 =  Hh_class("python")
-hh4 =  Hh_class()
-print(hh1)
-print(hh2)
-print(hh3)
-print(hh4)
+choise = Hh_class("врач")
+print(choise)
 
-sj1 =  Superjob_class("python")
-sj2 =  Superjob_class("python")
-sj3 =  Superjob_class("python")
-sj4 =  Superjob_class("python")
-print(sj1)
-print(sj2)
-print(sj3)
-print(sj4)
 
+choisegj = Superjob_class('учитель')
+print(choisegj)
