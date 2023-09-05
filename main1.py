@@ -8,10 +8,9 @@ params = {
     "keyword": answer,
     'id_vacancy': None,  # ID вакансии
     'profession': None,  # назввние должности
-    'address': None,  # страна Россия 113
-    'payment_to': 100000,  # зарплата from и to
+    'payment_from': 100000,  # зарплата from и to
     'is_archive': False,  # id open name Открытая
-    'id_client': None,  # ID работодателя Яндекс
+    'title_client': None,  # имя работодателя
     'experience': None,  # нет опыта
     'type_of_work': None,  # занятость полная_неполная
     'vacancyRichText': None,  # описание
@@ -27,6 +26,7 @@ data = response.content.decode()
 vacant = json.loads(data)
 for data in vacant:
     print(vacant['objects'][0]['profession'])
-    print(vacant['objects'][0]['candidat'])
-    print(vacant['objects'][0]['payment_to'])
+    print(vacant['objects'][0]['client']['title'])
+    print(vacant['objects'][0]['payment_from'])
+    #print(vacant)
 
