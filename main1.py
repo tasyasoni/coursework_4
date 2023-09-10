@@ -1,32 +1,29 @@
-import json
-import requests
+from api_work import Hh_class, Superjob_class
+from vacancy import Vacancy
 
-api_key = 'v3.r.137788648.b6e3964b060d85788bed8074f9b2410bc31ab525.9cd7dfa838ca298629103cf851f1404c23d276da'
-url = f'https://api.superjob.ru/2.0/vacancies/'
-answer = "230000"
-params = {
-    "keyword": answer,
-    'id_vacancy': None,  # ID вакансии
-    'profession': None,  # назввние должности
-    'payment_from': 100000,  # зарплата from и to
-    'is_archive': False,  # id open name Открытая
-    'title_client': None,  # имя работодателя
-    'experience': None,  # нет опыта
-    'type_of_work': None,  # занятость полная_неполная
-    'vacancyRichText': None,  # описание
-    'candidat': None  # требования
-}
+print("Привет! Давай найдем тебе работу мечты!:)")
+print("Выбери платформу на которой будем искать: если на HeadHunter - введи 1, если на Superjob - введи 2")
+platform_answer = int(input())
+print("Введи поисковый запрос")
+key_word = str(input())
 
-headers = {
-    "X-Api-App-Id": 'v3.r.137788648.b6e3964b060d85788bed8074f9b2410bc31ab525.9cd7dfa838ca298629103cf851f1404c23d276da'
-}
-
-response = requests.get(url, headers=headers, params=params)
-data = response.content.decode()
-vacant = json.loads(data)
-for data in vacant:
-    print(vacant['objects'][0]['profession'])
-    print(vacant['objects'][0]['client']['title'])
-    print(vacant['objects'][0]['payment_from'])
-    #print(vacant)
+if platform_answer == 1:
+    vacancy = Hh_class(key_word).get_vacancies()
+    data = Vacancy(vacancy)
+    data.add_vacancy()
+    print("Поищем более детально? Введите ключевое слово для поиска")
+    find_word = input()
+    for element in data.find_vacancy(find_word):
+        print(str(element))
+    # print(data.find_vacancy(find_word))
+elif platform_answer == 2:
+    vacancy = Superjob_class(key_word).get_vacancies()
+    data = Vacancy(vacancy)
+    data.add_vacancy()
+    print("Поищем более детально? Введите ключевое слово для поиска")
+    find_word = input()
+    print(data.find_vacancy(find_word))
+else:
+    print("Нет такой платформы, начните поиск заново")
+    exit()
 
