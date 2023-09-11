@@ -3,7 +3,6 @@ import requests
 import json
 
 
-
 class Api_work(ABC):
     @abstractmethod
     def get_vacancies(self):
@@ -11,7 +10,6 @@ class Api_work(ABC):
 
 
 class Hh_class(Api_work):
-
 
     def get_vacancies(self, *answer):
         params = {
@@ -41,9 +39,3 @@ class Superjob_class(Api_work):
 
 
 
-hh1 = Hh_class()
-hh = hh1.get_vacancies('врач')
-# print(hh)
-#
-# sg = Superjob_class.get_vacancies("тренер")
-# print(sg)

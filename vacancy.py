@@ -1,10 +1,7 @@
 import json
 from abc import ABC, abstractmethod
-from api_work import hh
-
 
 class Vacancy:
-
     def __init__(self, name, employer, salary, requirements, responsibility, url):
         self.name = name
         self.employer = employer
@@ -12,6 +9,7 @@ class Vacancy:
         self.requirements = requirements
         self.responsibility = responsibility
         self.url = url
+
 
     def __dict__(self):
         return{"name": self.name,
@@ -21,21 +19,33 @@ class Vacancy:
                "responsibility": self.responsibility,
                "url": self.url}
 
+
     def __str__(self):
         return self.name
 
 
-    def compare_salary(self):
-        pass
+    def compare_salary(self, quantity):
+        with open('vacancy.json', 'r', encoding='utf-8') as outfile:
+            vacancies_data = json.load(outfile)
+            for vacancy in vacancies_data:
+                if vacancy['salary'] == None:
+                    vacancy['salary'] = 0
+                else:
+                    vacancy['salary']
+            newlist = sorted(vacancies_data, key=lambda d: d['salary'], reverse=True)
+            i = 0
+            while i < quantity:
+                print (newlist[i]['name'], newlist[i]['employer'], newlist[i]['salary'], newlist[i]['url'])
+                i += 1
 
 
 class FileAbsract(ABC):
     @abstractmethod
-    def add_vacancy(vacancy_dict):
+    def add_vacancy(self):
         pass
 
     @abstractmethod
-    def find_vacancy(word):
+    def find_vacancy(self):
         pass
     @abstractmethod
     def del_vacancy(self):
@@ -44,32 +54,34 @@ class FileAbsract(ABC):
 
 class Filework(FileAbsract):
 
+    def __init__(self):
+        pass
+
     @staticmethod
-    def add_vacancy(vacancy_dict):
-        # with open('vacancy.json', 'w', encoding='utf-8') as outfile:
-        content = []
-        content.append(vacancy_dict.__dict__())
+    def add_vacancy(file):
+        with open('vacancy.json', 'r', encoding='utf-8') as outfile:
+            content = json.load(outfile)
+        content.append(file.__dict__())
         with open('vacancy.json', 'w', encoding='utf-8') as outfile:
             json.dump(content, outfile, ensure_ascii=False, indent=6)
 
-    def find_vacancy(self, word):
-        file = open('vacancy.json', 'r', encoding='utf-8')
-        vacancies_data = json.load(file)
 
-        for vacancy in vacancies_data:
-            if word in vacancy[0] or \
-                word in vacancy[1] or\
-                word in str(vacancy[2]) or\
-                word in vacancy[3] or\
-                word in str(vacancy[4]) or\
-                word in vacancy[5]:
-                return(vacancy)
-            else:
-                continue
-        print('Нет вакансий, соответствующих заданным критериям.')
+    def find_vacancy(request):
+        with open('vacancy.json', 'r', encoding='utf-8') as outfile:
+            content = json.load(outfile)
+            for vacancy in content:
+                if request in vacancy['employer']:
+                    return (vacancy['employer'], vacancy['name'], vacancy['salary'], vacancy['url'])
+                else:
+                    continue
+            return('Данный работодатель пока никого не ищет :((')
+
 
     def del_vacancy(self):
-        pass
+        with open('vacancy.json', "w", encoding='utf-8') as outfile:
+            content = []
+            json.dump(content, outfile)
+
 
 
 def created_hh_vacancy(vacant):
@@ -83,9 +95,10 @@ def created_hh_vacancy(vacant):
         requirements = vacancy['snippet']['requirement']
         responsibility = vacancy['snippet']['responsibility']
         url = vacancy['alternate_url']
-        vacancy_dict = Vacancy(name, employer, salary, requirements, responsibility, url)
-        continue
-    return (vacancy_dict)
+        vacancy_for_file = Vacancy(name, employer, salary, requirements, responsibility, url)
+        Filework.add_vacancy(vacancy_for_file)
+
+
 def created_sj_vacancy(vacant):
     for vacancy in vacant['objects']:
         name = vacancy['profession']
@@ -94,11 +107,15 @@ def created_sj_vacancy(vacant):
         requirements = vacancy['candidat']
         responsibility = vacancy['vacancyRichText']
         url = vacancy['link']
-        vacancy_dict = Vacancy(name, employer, salary, requirements, responsibility, url)
-    return vacancy_dict
+        vacancy_for_file = Vacancy(name, employer, salary, requirements, responsibility, url)
+        Filework.add_vacancy(vacancy_for_file)
 
-vacancy_dict = created_hh_vacancy(hh)
-print(hh)
-print(vacancy_dict)
 
-# fw = Filework.add_vacancy(vacancy_dict)
+
+
+
+
+
+
+
+
