@@ -1,8 +1,8 @@
 import json
 from abc import ABC, abstractmethod
 
-class Vacancy:
-    def __init__(self, name, employer, salary, requirements, responsibility, url):
+class Vacancy: # класс вакансий
+    def __init__(self, name, employer, salary, requirements, responsibility, url):  #инициализация
         self.name = name
         self.employer = employer
         self.salary = salary
@@ -12,6 +12,9 @@ class Vacancy:
 
 
     def __dict__(self):
+        """
+        метод для добавления данных экземпляров класса в словарь
+        """
         return{"name": self.name,
                "employer": self.employer,
                "salary": self.salary,
@@ -23,8 +26,12 @@ class Vacancy:
     def __str__(self):
         return self.name
 
-
-    def compare_salary(self, quantity):
+    @staticmethod
+    def compare_salary(quantity):
+        """
+        метод для сортировки по зар.плате и вывода заданного
+        пользователем коли-ва вакансий
+        """
         with open('vacancy.json', 'r', encoding='utf-8') as outfile:
             vacancies_data = json.load(outfile)
             for vacancy in vacancies_data:
@@ -39,7 +46,7 @@ class Vacancy:
                 i += 1
 
 
-class FileAbsract(ABC):
+class FileAbsract(ABC): #абстрактый класс для работы с файлом
     @abstractmethod
     def add_vacancy(self):
         pass
@@ -52,13 +59,16 @@ class FileAbsract(ABC):
         pass
 
 
-class Filework(FileAbsract):
+class Filework(FileAbsract): #класс для работы с файлом
 
     def __init__(self):
         pass
 
     @staticmethod
     def add_vacancy(file):
+        """
+        метод для добавления вакнсий в файл
+        """
         with open('vacancy.json', 'r', encoding='utf-8') as outfile:
             content = json.load(outfile)
         content.append(file.__dict__())
@@ -67,6 +77,9 @@ class Filework(FileAbsract):
 
 
     def find_vacancy(request):
+        """
+        метод для фильтрации вакансий по работодателю
+        """
         with open('vacancy.json', 'r', encoding='utf-8') as outfile:
             content = json.load(outfile)
             for vacancy in content:
@@ -77,7 +90,11 @@ class Filework(FileAbsract):
             return('Данный работодатель пока никого не ищет :((')
 
 
-    def del_vacancy(self):
+    @staticmethod
+    def del_vacancy():
+        """
+        метод для удаления вакансий из файла
+        """
         with open('vacancy.json', "w", encoding='utf-8') as outfile:
             content = []
             json.dump(content, outfile)
@@ -85,6 +102,9 @@ class Filework(FileAbsract):
 
 
 def created_hh_vacancy(vacant):
+    """
+    функция для создания экземпляров класса с HeadHunter
+    """
     for vacancy in vacant['items']:
         name = vacancy['name']
         employer = vacancy['employer']['name']
@@ -100,15 +120,22 @@ def created_hh_vacancy(vacant):
 
 
 def created_sj_vacancy(vacant):
+    """
+    функция для создания экземпляров класса с Superjob
+    """
     for vacancy in vacant['objects']:
-        name = vacancy['profession']
-        employer = vacancy['client']['title']
-        salary = vacancy['payment_to']
-        requirements = vacancy['candidat']
-        responsibility = vacancy['vacancyRichText']
-        url = vacancy['link']
-        vacancy_for_file = Vacancy(name, employer, salary, requirements, responsibility, url)
-        Filework.add_vacancy(vacancy_for_file)
+        try:
+            name = vacancy['profession']
+            employer = vacancy['client']['title']
+            salary = vacancy['payment_to']
+            requirements = vacancy['candidat']
+            responsibility = vacancy['vacancyRichText']
+            url = vacancy['link']
+        except KeyError:
+            pass
+        else:
+            vacancy_for_file = Vacancy(name, employer, salary, requirements, responsibility, url)
+            Filework.add_vacancy(vacancy_for_file)
 
 
 
